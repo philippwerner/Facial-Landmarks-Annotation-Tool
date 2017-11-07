@@ -95,11 +95,11 @@ QString ft::Utils::shortenPath(const QString &sPath, int iMaxLen)
 }
 
 // +-----------------------------------------------------------
-vector<QPoint> ft::Utils::readFaceFitPointsFile(QString sFileName)
+vector<QPointF> ft::Utils::readFaceFitPointsFile(QString sFileName)
 {
 	QFile oFile(sFileName);
 	if (!oFile.open(QFile::ReadOnly))
-		return vector<QPoint>();
+		return vector<QPointF>();
 
 	QTextStream oStream(&oFile);
 	QString sLine;
@@ -112,13 +112,13 @@ vector<QPoint> ft::Utils::readFaceFitPointsFile(QString sFileName)
 	if (lData.size() != 2 || lData.at(0) != "n_points:")
 	{
 		oFile.close();
-		return vector<QPoint>();
+		return vector<QPointF>();
 	}
 	else
 		iNumPoints = lData[1].toInt();
 
 	// Read the points
-	vector<QPoint> vPoints;
+	vector<QPointF> vPoints;
 	while (!oStream.atEnd())
 	{
 		sLine = oStream.readLine();
@@ -129,18 +129,18 @@ vector<QPoint> ft::Utils::readFaceFitPointsFile(QString sFileName)
 		if (lData.size() != 2)
 		{
 			oFile.close();
-			return vector<QPoint>();
+			return vector<QPointF>();
 		}
 
 		float x = lData[0].toFloat();
 		float y = lData[1].toFloat();
-		vPoints.push_back(QPoint(x, y));
+		vPoints.push_back(QPointF(x, y));
 	}
 
 	oFile.close();
 
 	if (vPoints.size() != iNumPoints)
-		return vector<QPoint>();
+		return vector<QPointF>();
 	else
 		return vPoints;
 }

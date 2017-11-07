@@ -305,7 +305,7 @@ void ft::ChildWindow::setContextMenu(QMenu *pMenu)
 }
 
 // +-----------------------------------------------------------
-void ft::ChildWindow::addFeature(const QPoint &oPos)
+void ft::ChildWindow::addFeature(const QPointF &oPos)
 {
 	FaceFeatureNode *pNode = m_pFaceWidget->addFaceFeature(oPos, true);
 	m_pFaceDatasetModel->addFeature(pNode->getID(), pNode->x(), pNode->y());
@@ -371,7 +371,7 @@ void ft::ChildWindow::disconnectFeatures()
 }
 
 // +-----------------------------------------------------------
-bool ft::ChildWindow::positionFeatures(std::vector<QPoint> vPoints)
+bool ft::ChildWindow::positionFeatures(const std::vector<QPointF> &vPoints)
 {
 	QList<FaceFeatureNode *> lFeats = m_pFaceWidget->getFaceFeatures(vPoints.size()); // this call automatically adds or removes features to match vPoints.size()
 	

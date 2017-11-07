@@ -29,7 +29,7 @@ namespace ft
 	/**
 	 * Represents the data of a facial feature in the image dataset.
 	 */
-	class FaceFeature : public QPoint
+	class FaceFeature : public QPointF
     {
 	public:
 

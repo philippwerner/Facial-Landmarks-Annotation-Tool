@@ -170,9 +170,9 @@ namespace ft
 
 		/**
 		 * Adds a new feature to the face feature editor, in the given position.
-		 * @param oPos QPoint with the position (x, y) of the new feature.
+		 * @param oPos QPointF with the position (x, y) of the new feature.
 		 */
-		void addFeature(const QPoint &oPos);
+		void addFeature(const QPointF &oPos);
 
 		/**
 		 * Removes the selected features and all their connections.
@@ -194,11 +194,11 @@ namespace ft
 		 * list of positions. If the number of face features is different than the number of
 		 * points, the model is updated accordingly (with features added or removed to match
 		 * the number of points).
-		 * @param vPoints A std::vector with the list of QPoint instances with the new
+		 * @param vPoints A std::vector with the list of QPointF instances with the new
 		 * features' positions.
 		 * @return Boolean indicating if the reposition was successfully done or not.
 		 */
-		bool positionFeatures(std::vector<QPoint> vPoints);
+		bool positionFeatures(const std::vector<QPointF> &vPoints);
 
 	protected:
 

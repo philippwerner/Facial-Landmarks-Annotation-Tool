@@ -294,7 +294,7 @@ void ft::FaceWidget::createFaceFeatures()
 	FaceFeatureNode *pCurFeat = NULL;
 	for(int i = 0; i < NUM_FACE_FEATURES; i++)
 	{
-		pCurFeat = addFaceFeature(QPoint(aFaceModel[i][0], aFaceModel[i][1]));
+		pCurFeat = addFaceFeature(QPointF(aFaceModel[i][0], aFaceModel[i][1]));
 		if(!pPrevFeat)
 			pPrevFeat = pCurFeat;
 		else
@@ -362,14 +362,14 @@ QList<ft::FaceFeatureEdge*> ft::FaceWidget::getSelectedConnections() const
 }
 
 // +-----------------------------------------------------------
-ft::FaceFeatureNode* ft::FaceWidget::addFaceFeature(const QPoint &oPos, bool bGlobal)
+ft::FaceFeatureNode* ft::FaceWidget::addFaceFeature(const QPointF &oPos, bool bGlobal)
 {
 	int iID = m_lFaceFeatures.size();
 	FaceFeatureNode *pNode = new FaceFeatureNode(iID, this);
 	m_pScene->addItem(pNode);
 	m_lFaceFeatures.append(pNode);
 	if(bGlobal)
-		pNode->setPos(mapToScene(mapFromGlobal(oPos)));
+		pNode->setPos(mapToScene(mapFromGlobal( QPoint(std::round(oPos.x()), std::round(oPos.y())) )));
 	else
 		pNode->setPos(oPos);
 	return pNode;

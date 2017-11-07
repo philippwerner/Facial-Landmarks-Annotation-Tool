@@ -362,7 +362,7 @@ void ft::MainWindow::onFitFinished(int iExitCode, QProcess::ExitStatus eExitStat
 		return;
 	}
 
-	vector<QPoint> vPoints = Utils::readFaceFitPointsFile(m_sFitTempFile);
+	vector<QPointF> vPoints = Utils::readFaceFitPointsFile(m_sFitTempFile);
 	if (vPoints.size() == 0)
 	{
 		showStatusMessage(tr("The face fit utility could not fit the landmarks to this image."));
@@ -563,9 +563,9 @@ void ft::MainWindow::on_actionAddFeature_triggered()
 	// if the action is called from a context menu in the face features
 	// editor (see method FaceWidget::contextMenuEvent)
 	QVariant vPos = ui->actionAddFeature->data();
-	QPoint oPos;
+	QPointF oPos;
 	if(vPos.isValid())
-		oPos = vPos.value<QPoint>();
+		oPos = vPos.value<QPointF>();
 	else
 		oPos = QCursor::pos();
 

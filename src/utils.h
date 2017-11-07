@@ -55,11 +55,11 @@ namespace ft
 
 		/**
 		 * Reads a points file produced by the face-fit utility.
-		 * @return A std::vector with a list of QPoint instances with the points
+		 * @return A std::vector with a list of QPointF instances with the points
 		 * of facial landmarks fitted to an image, or an empty vector if the reading
 		 * failed.
 		 */
-		static std::vector<QPoint> readFaceFitPointsFile(QString sFileName);
+		static std::vector<QPointF> readFaceFitPointsFile(QString sFileName);
     };
 }
 

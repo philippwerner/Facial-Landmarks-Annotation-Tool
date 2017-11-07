@@ -24,13 +24,13 @@
 using namespace std;
 
 // +-----------------------------------------------------------
-ft::FaceFeature::FaceFeature():	QPoint()
+ft::FaceFeature::FaceFeature():	QPointF()
 {
 	setID(-1);
 }
 
 // +-----------------------------------------------------------
-ft::FaceFeature::FaceFeature(int iID, float x, float y): QPoint(x, y)
+ft::FaceFeature::FaceFeature(int iID, float x, float y): QPointF(x, y)
 {
 	setID(iID);
 }
