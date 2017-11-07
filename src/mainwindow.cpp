@@ -34,6 +34,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QTemporaryFile>
+#include <QMenu>
 
 using namespace std;
 
@@ -105,6 +106,10 @@ ft::MainWindow::MainWindow(QWidget *pParent) :
 
 	// Connect the zoom slider
 	connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(onSliderValueChanged(int)));
+
+#ifdef DLIB_INTEGRATION
+	ui->menuDlib->setEnabled(true);
+#endif
 }
 
 // +-----------------------------------------------------------
@@ -511,6 +516,48 @@ void ft::MainWindow::on_actionExportPointsFile_triggered()
 }
 
 // +-----------------------------------------------------------
+
+#ifdef DLIB_INTEGRATION
+void ft::MainWindow::on_actionDlibFitLandmarks_triggered()
+{
+	// Check for landmark localization model
+	if (!m_dlib.has_landmark_model())
+		emit on_actionDlibSelectLandmarkModel_triggered();
+	if (!m_dlib.has_landmark_model())
+		return;
+
+	// Get the selected face annotation dataset
+	ChildWindow *pChild = (ChildWindow*)ui->tabWidget->currentWidget();
+	if (!pChild) // Sanity check
+		return;
+
+	// Get the path of the selected image in the dataset
+	QModelIndex oSelectedImage = pChild->selectionModel()->currentIndex();
+	QModelIndex oIdx = pChild->dataModel()->index(oSelectedImage.row(), 1);
+	QString sImageFile = pChild->dataModel()->data(oIdx, Qt::DisplayRole).toString();
+
+	// Run the algorithm
+	std::vector<QPointF> vPoints;
+	if (!m_dlib.get_landmarks(sImageFile, vPoints))
+		QMessageBox::critical(this, tr("Error"), tr("Cannot detect face!"));
+
+	// Reposition the features according to the face-fit results
+	pChild->positionFeatures(vPoints);
+	showStatusMessage(tr("Face fit completed successfully."));
+}
+
+void ft::MainWindow::on_actionDlibSelectLandmarkModel_triggered()
+{
+	QString sFileName = QFileDialog::getOpenFileName(this, tr("Select DLIB shape predictor model..."), windowFilePath(), tr("Serialized DLIB model (*.dat);; All files (*.*)"));
+	if (sFileName.length())
+	{
+		if (!m_dlib.set_landmark_model_filename(sFileName))
+			QMessageBox::critical(this, tr("Error"), tr("Error loading model file %1!").arg(sFileName));
+	}
+}
+#endif
+
+// +-----------------------------------------------------------
 void ft::MainWindow::on_actionProject_triggered()
 {
 	QDesktopServices::openUrl(QUrl("https://github.com/luigivieira/Facial-Landmarks-Annotation-Tool.git"));
@@ -649,9 +696,9 @@ void ft::MainWindow::on_actionAddFeature_triggered()
 	// if the action is called from a context menu in the face features
 	// editor (see method FaceWidget::contextMenuEvent)
 	QVariant vPos = ui->actionAddFeature->data();
-	QPointF oPos;
+	QPoint oPos;
 	if(vPos.isValid())
-		oPos = vPos.value<QPointF>();
+		oPos = vPos.value<QPoint>();
 	else
 		oPos = QCursor::pos();
 
@@ -806,6 +853,7 @@ void ft::MainWindow::updateUI()
 	ui->actionDisconnectFeatures->setEnabled(bConnectionsSelected);
 	ui->actionFitLandmarks->setEnabled(bItemsSelected);
 	ui->actionExportPointsFile->setEnabled(bItemsSelected);
+	ui->actionDlibFitLandmarks->setEnabled(bItemsSelected);
 	m_pViewButton->setEnabled(bFileOpened);
 	ui->zoomSlider->setEnabled(bFileOpened);
 

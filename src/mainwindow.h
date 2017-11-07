@@ -27,6 +27,10 @@
 #include "aboutwindow.h"
 #include "childwindow.h"
 
+#ifdef DLIB_INTEGRATION
+#include "dlib_integration.h"
+#endif
+
 namespace Ui {
     class MainWindow;
 }
@@ -171,6 +175,18 @@ namespace ft
 		* Slot for the menu Export Points File trigger event.
 		*/
 		void on_actionExportPointsFile_triggered();
+
+#ifdef DLIB_INTEGRATION
+		/**
+		 * Slot for the menu dlib Fit Landmarks trigger event.
+		 */
+		void on_actionDlibFitLandmarks_triggered();
+
+		/**
+		 * Slot for the menu dlib select landmark model trigger event.
+		 */
+		void on_actionDlibSelectLandmarkModel_triggered();
+#endif
 
         /**
          * Slot for the menu Project trigger event.
@@ -318,6 +334,10 @@ namespace ft
 
 		/** Name of the temporary file used for the face-fit utility. */
 		QString m_sFitTempFile;
+
+#ifdef DLIB_INTEGRATION
+		DlibFeatureLocalization m_dlib;
+#endif
     };
 };
 

@@ -195,7 +195,19 @@
      <addaction name="separator"/>
      <addaction name="actionConfigure"/>
     </widget>
+    <widget class="QMenu" name="menuDlib">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>&amp;DLIB Face Analysis</string>
+     </property>
+     <addaction name="actionDlibFitLandmarks"/>
+     <addaction name="separator"/>
+     <addaction name="actionDlibSelectLandmarkModel"/>
+    </widget>
     <addaction name="menu_CSIRO_Face_Analysis_SDK"/>
+    <addaction name="menuDlib"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -978,6 +990,23 @@
    </property>
    <property name="toolTip">
     <string>Export PTS files</string>
+   </property>
+  </action>
+  <action name="actionDlibFitLandmarks">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/fat</normaloff>:/icons/fat</iconset>
+   </property>
+   <property name="text">
+    <string>Fit landmarks with &amp;DLIB</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionDlibSelectLandmarkModel">
+   <property name="text">
+    <string>Select &amp;landmark model...</string>
    </property>
   </action>
  </widget>

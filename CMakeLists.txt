@@ -1,4 +1,5 @@
 # Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+#               2017 Philipp Werner (http://philipp-werner.info)
 #
 # This file is part of FLAT.
 #
@@ -40,6 +41,15 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# dlib configureation (optional)
+option(DLIB_INTEGRATION "Set TRUE to add dlib dependency for automatic face detection and feature localization." FALSE)
+if(DLIB_INTEGRATION)
+  find_path(dlib_ROOT_PATH NAMES dlib/matrix.h)
+  include(${dlib_ROOT_PATH}/dlib/cmake)
+  add_definitions(-DDLIB_INTEGRATION)
+  set(OPTIONAL_LIBS ${OPTIONAL_LIBS} dlib)
+endif()
+
 # Qt configuration
 set(CMAKE_INCLUDE_CURRENT_DIR ON) # Find includes in corresponding build directories
 set(CMAKE_AUTOMOC ON) # Instruct CMake to run moc automatically when needed
@@ -63,4 +73,4 @@ set_target_properties(FLAT PROPERTIES OUTPUT_NAME flat)
 set_target_properties(FLAT PROPERTIES OUTPUT_NAME_DEBUG flatd)
 
 # Set up the required libraries
-target_link_libraries(FLAT Qt5::Core Qt5::Widgets Qt5::Xml)
+target_link_libraries(FLAT Qt5::Core Qt5::Widgets Qt5::Xml ${OPTIONAL_LIBS})
