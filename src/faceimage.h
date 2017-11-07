@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -84,7 +85,7 @@ namespace ft
 		 * Gets all face features in the image.
 		 * @return Vector with all instances of face features in the image.
 		 */
-		std::vector<FaceFeature*> getFeatures() const;
+		const std::vector<FaceFeature*> & getFeatures() const;
 
 		/**
 		 * Removes the face feature at the given index.
@@ -132,6 +133,20 @@ namespace ft
 		 */
 		QPixmap pixMap() const;
 
+		/**
+		 * Load point coordinates from PTS file.
+		 * @param errstr May return error message.
+		 * @param iNumExpectedFeatures Integer with the number of expected features, -1 if unknown.
+		 * @return True if successful.
+		 */
+		bool loadPtsFile(QString & errstr, int iNumExpectedFeatures = -1);
+
+		/**
+		 * Save point coordinates to PTS file (if changed).
+		 * @param keep_backup Whether old PTS file should be kept as backup.
+		 * @return True if successful.
+		 */
+		bool savePtsFile(bool keep_backup = true);
 	protected:
 
 		/**

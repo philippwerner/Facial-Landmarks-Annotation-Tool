@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -291,6 +292,91 @@ bool ft::MainWindow::saveCurrentFile(bool bAskForFileName)
 			}
 
 			return true;
+		}
+	}
+}
+
+// +-----------------------------------------------------------
+void ft::MainWindow::on_actionImportImageDirPts_triggered()
+{
+	ChildWindow *pChild = (ChildWindow*)ui->tabWidget->currentWidget();
+	if (!pChild)
+		return;
+
+	QString path = QFileDialog::getExistingDirectory(this, tr("Select image directory"),
+		"", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+	if (path.isEmpty())
+		return;
+
+	// find image files
+	QDir dir(path);
+	QStringList filters;
+	filters << "*.jpg" << "*.png";
+	QStringList lsFiles = dir.entryList(filters, QDir::Files);
+
+	if (lsFiles.size())
+	{
+		// add images
+		for (int i = 0; i < lsFiles.size(); ++i)
+			lsFiles[i] = path + '/' + lsFiles[i];
+		pChild->dataModel()->addImages(lsFiles);
+
+		// load pts files
+		FaceDataset * ds = pChild->dataModel()->getFaceDataset();
+		int n_feat = -1;
+		QString err_message;
+		for (int i = 0; i < pChild->dataModel()->rowCount(); ++i)
+		{
+			//QModelIndex midx = pChild->dataModel()->index(i, 0);
+			//QString sImageFile = pChild->dataModel()->data(midx, Qt::DisplayRole).toString();
+			FaceImage * img = ds->getImage(i);
+			if (!img)
+				continue;
+			if (img->loadPtsFile(err_message, n_feat))
+			{
+				if (n_feat == -1)
+				{
+					n_feat = img->getFeatures().size();
+					ds->setNumFeatures(n_feat);
+				}
+			}
+			else
+			{
+				if (QMessageBox::critical(this, tr("Error"), tr("%1\nContinue to read PTS files of next images?").arg(err_message),
+					QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
+					break;
+			}
+		}
+		
+		m_sLastPathUsed = QFileInfo(lsFiles[0]).absolutePath();
+		if (!pChild->selectionModel()->currentIndex().isValid())
+			pChild->selectionModel()->setCurrentIndex(pChild->dataModel()->index(0, 0), QItemSelectionModel::Select);
+	}
+	else
+	{
+		QMessageBox::warning(this, "Warning", "No images were found in the selected directory.");
+	}
+}
+
+// +-----------------------------------------------------------
+void ft::MainWindow::on_actionExportPts_triggered()
+{
+	ChildWindow *pChild = (ChildWindow*)ui->tabWidget->currentWidget();
+	if (!pChild)
+		return;
+
+	FaceDataset * ds = pChild->dataModel()->getFaceDataset();
+	for (int i = 0; i < pChild->dataModel()->rowCount(); ++i)
+	{
+		FaceImage * img = ds->getImage(i);
+		if (!img)
+			continue;
+		if (!img->savePtsFile(true))
+		{
+			if (QMessageBox::critical(this, tr("Error"), tr("Failed to save PTS file for '%1'\nContinue to save PTS files?").arg(img->fileName()),
+				QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
+				break;
 		}
 	}
 }
@@ -710,6 +796,8 @@ void ft::MainWindow::updateUI()
 	// Update the UI availability
 	ui->actionSave->setEnabled(bFileChanged);
 	ui->actionSaveAs->setEnabled(bFileNotNew);
+	ui->actionImportImageDirPts->setEnabled(bFileOpened);
+	ui->actionExportPts->setEnabled(bFileOpened);
 	ui->actionAddImage->setEnabled(bFileOpened);
 	ui->actionRemoveImage->setEnabled(bItemsSelected);
 	ui->actionAddFeature->setEnabled(bFileOpened);

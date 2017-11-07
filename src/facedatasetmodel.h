@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -118,6 +119,12 @@ namespace ft
 		 * @return Boolean indicating if the operation was successful or not.
 		 */
 		bool removeImages(const QList<int> &lImageIndexes);
+
+		/**
+		 * Get face dataset.
+		 * @return dataset
+		 */
+		FaceDataset * getFaceDataset();
 
 		/**
 		 * Adds a new feature to the face dataset. A new feature is added to all

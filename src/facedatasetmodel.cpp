@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -215,6 +216,12 @@ bool ft::FaceDatasetModel::removeImages(const QList<int> &lImageIndexes)
 	endRemoveRows();
 	emit dataChanged(index(0), index(lImageIndexes.size() - 1));
 	return true;
+}
+
+// +-----------------------------------------------------------
+ft::FaceDataset * ft::FaceDatasetModel::getFaceDataset()
+{
+	return m_pFaceDataset;
 }
 
 // +-----------------------------------------------------------

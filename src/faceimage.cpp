@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -20,6 +21,9 @@
 #include "faceimage.h"
 
 #include <QApplication>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QMessageBox>
 
 using namespace std;
 
@@ -134,6 +138,122 @@ QPixmap ft::FaceImage::pixMap() const
 }
 
 // +-----------------------------------------------------------
+bool ft::FaceImage::loadPtsFile(QString & errstr, int iNumExpectedFeatures)
+{
+	int last_dot = m_sFileName.lastIndexOf(".");
+	QString fn = m_sFileName.mid(0, last_dot) + ".pts";
+	int n_points = -1;
+	QString keyword;
+	int value;
+	;
+
+	QFile file(fn);
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		errstr = QString(QApplication::translate("FaceImage", "Cannot open file '%1'!").arg(fn));
+		return false;
+	}
+
+	QTextStream in(&file);
+
+	while (!in.atEnd())
+	{
+		in >> keyword;
+		keyword = keyword.toLower();
+		if (keyword == "version:")
+		{
+			in >> value;
+			if (value != 1)
+			{
+				errstr = QString(QApplication::translate("FaceImage", "File '%1' has unsupported version!").arg(fn));
+				return false;
+			}
+		}
+		else if (keyword == "n_points:")
+		{
+			in >> value;
+			if (value < 1 || value > 10000)
+			{
+				errstr = QString(QApplication::translate("FaceImage", "File '%1' has unsupported n_points '%2'!").arg(fn).arg(value));
+				return false;
+			}
+			n_points = value;
+		}
+		else if (keyword == "{")
+		{
+			break;
+		}
+		else 
+		{
+			errstr = QString(QApplication::translate("FaceImage", "File '%1' parse error!").arg(fn));
+			return false;
+		}
+	}
+
+	if (n_points < 1)
+	{
+		errstr = QString(QApplication::translate("FaceImage", "File '%1' lacks n_points info!").arg(fn));
+		return false;
+	}
+
+	if (iNumExpectedFeatures > 0 && iNumExpectedFeatures != n_points)
+	{
+		errstr = QString(QApplication::translate("FaceImage", "File '%1' n_points=%2 is unexpected! Expected n_points=%3!").arg(fn).arg(n_points).arg(iNumExpectedFeatures));
+		return false;
+	}
+
+	// read points
+	float x, y;
+	m_vFeatures.clear();
+	for (int i = 0; i < n_points; ++i)
+	{
+		in >> x >> y;
+		m_vFeatures.push_back(new FaceFeature(i, x, y));
+	}
+
+	if (in.atEnd())
+	{
+		errstr = QString(QApplication::translate("FaceImage", "File '%1' parse error! File ended too early.").arg(fn));
+		return false;
+	}
+
+	return true;
+}
+
+// +-----------------------------------------------------------
+bool ft::FaceImage::savePtsFile(bool keep_backup)
+{
+	int last_dot = m_sFileName.lastIndexOf(".");
+	QString fn = m_sFileName.mid(0, last_dot) + ".pts";
+
+	// todo:
+	// - add change bool per FaceImage, set in ft::ChildWindow::updateFeaturesInDataset()
+	// - check for changes, keep backup %1_backup001.pts
+	// - GUI: option whether to save backup
+
+	if (m_vFeatures.empty())
+		return true;
+
+	QFile oFile(fn);
+	if (!oFile.open(QFile::WriteOnly | QFile::Text))
+		return false;
+
+	QTextStream oStream(&oFile);
+	oStream << "version: 1" << endl;
+	oStream << QString("n_points: %1").arg(m_vFeatures.size()) << endl;
+	oStream << "{" << endl;
+
+	foreach(FaceFeature *pFeat, m_vFeatures)
+	{
+		oStream << QString("%1\t%2").arg(pFeat->x()).arg(pFeat->y()) << endl;
+	}
+	oStream << "}" << endl;
+	oFile.close();
+
+	return true;
+}
+
+// +-----------------------------------------------------------
 ft::FaceFeature* ft::FaceImage::addFeature(int iID, float x, float y)
 {
 	FaceFeature *pFeat = new FaceFeature(iID, x, y);
@@ -150,7 +270,7 @@ ft::FaceFeature* ft::FaceImage::getFeature(const int iIndex) const
 }
 
 // +-----------------------------------------------------------
-std::vector<ft::FaceFeature*> ft::FaceImage::getFeatures() const
+const std::vector<ft::FaceFeature*> & ft::FaceImage::getFeatures() const
 {
 	return m_vFeatures;
 }

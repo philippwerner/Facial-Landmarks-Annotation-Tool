@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -141,7 +142,17 @@ namespace ft
 		 */ 
 		void on_actionSaveAs_triggered();
 
-        /**
+		/**
+		 * Slot for the menu Import Image Dir Pts trigger event.
+		 */
+		void on_actionImportImageDirPts_triggered();
+
+		/**
+		 * Slot for the menu Export Pts trigger event.
+		 */
+		void on_actionExportPts_triggered();
+		
+		/**
          * Slot for the menu Exit trigger event.
          */
         void on_actionExit_triggered();

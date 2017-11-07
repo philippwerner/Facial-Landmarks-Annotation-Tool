@@ -85,11 +85,26 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menu_Import">
+     <property name="title">
+      <string>&amp;Import</string>
+     </property>
+     <addaction name="actionImportImageDirPts"/>
+    </widget>
+    <widget class="QMenu" name="menu_Export">
+     <property name="title">
+      <string>&amp;Export</string>
+     </property>
+     <addaction name="actionExportPts"/>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="menu_Import"/>
+    <addaction name="menu_Export"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -941,6 +956,28 @@
    </property>
    <property name="toolTip">
     <string>Exports the annotation in current selected image to a CSIRO Face Analysis SDK points file</string>
+   </property>
+  </action>
+  <action name="actionImportImageDirPts">
+   <property name="text">
+    <string>... from image directory with &amp;PTS files</string>
+   </property>
+   <property name="iconText">
+    <string>Import images and PTS files from directory</string>
+   </property>
+   <property name="toolTip">
+    <string>Import images and PTS files from directory</string>
+   </property>
+  </action>
+  <action name="actionExportPts">
+   <property name="text">
+    <string>... to &amp;PTS files</string>
+   </property>
+   <property name="iconText">
+    <string>Export PTS files</string>
+   </property>
+   <property name="toolTip">
+    <string>Export PTS files</string>
    </property>
   </action>
  </widget>
