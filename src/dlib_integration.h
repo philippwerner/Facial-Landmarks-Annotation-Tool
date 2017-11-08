@@ -24,21 +24,17 @@
 
 #ifdef DLIB_INTEGRATION
 
-#ifdef DLIB_DNN_FACE_DETECTOR
-#include <dlib/dnn.h>
-#else
-#include <dlib/image_processing/frontal_face_detector.h>
-#endif
-#include <dlib/image_processing/shape_predictor.h>
 
 #include <QString>
 #include <QPoint>
+#include <vector>
 
 
 class DlibFeatureLocalization
 {
 public:
 	DlibFeatureLocalization();
+	~DlibFeatureLocalization();
 
 	bool set_facedet_model_filename(const QString & sModelFn);
 	bool has_facedet_model() const;
@@ -49,23 +45,8 @@ public:
 	bool get_landmarks(const QString & sImageFn, std::vector<QPointF> &vPoints);
 
 protected:
-
-#ifdef DLIB_DNN_FACE_DETECTOR
-	template <long num_filters, typename SUBNET> using con5d = dlib::con<num_filters, 5, 5, 2, 2, SUBNET>;
-	template <long num_filters, typename SUBNET> using con5 = dlib::con<num_filters, 5, 5, 1, 1, SUBNET>;
-
-	template <typename SUBNET> using downsampler = dlib::relu<dlib::affine<con5d<32, dlib::relu<dlib::affine<con5d<32, dlib::relu<dlib::affine<con5d<16, SUBNET>>>>>>>>>;
-	template <typename SUBNET> using rcon5 = dlib::relu<dlib::affine<con5<45, SUBNET>>>;
-
-	using net_type = dlib::loss_mmod<dlib::con<1, 9, 9, 1, 1, rcon5<rcon5<rcon5<downsampler<dlib::input_rgb_image_pyramid<dlib::pyramid_down<6>>>>>>>>;
-
-	net_type face_detector;
-	bool face_detector_loaded = false;
-#else
-	dlib::frontal_face_detector face_detector;
-#endif
-
-	dlib::shape_predictor lm_localizer;
+	// Speed up compilation by excluding dlib headers from most files
+	void * m_pData;
 };
 
 #endif
