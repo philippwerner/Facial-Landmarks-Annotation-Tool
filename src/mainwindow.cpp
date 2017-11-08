@@ -66,10 +66,8 @@ ft::MainWindow::MainWindow(QWidget *pParent) :
 	ui->imagesToolbar->addAction(m_pViewButton->menuAction());
 
 	QAction *pViewDetails = new QAction(QIcon(":/icons/viewdetails"), tr("&Details"), this);
-	pViewDetails->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
 	m_pViewButton->addAction(pViewDetails);
 	QAction *pViewIcons = new QAction(QIcon(":/icons/viewicons"), tr("&Icons"), this);
-	pViewIcons->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_I));
 	m_pViewButton->addAction(pViewIcons);
 
 	QSignalMapper *pMap = new QSignalMapper(ui->imagesToolbar);
@@ -107,8 +105,8 @@ ft::MainWindow::MainWindow(QWidget *pParent) :
 	// Connect the zoom slider
 	connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(onSliderValueChanged(int)));
 
-#ifdef DLIB_INTEGRATION
-	ui->menuDlib->setEnabled(true);
+#ifndef DLIB_INTEGRATION
+	ui->menuDlib->setEnabled(false);
 #endif
 }
 
@@ -121,6 +119,8 @@ ft::MainWindow::~MainWindow()
 	oSettings.setValue("windowState", saveState());
 	oSettings.setValue("lastPathUsed", m_sLastPathUsed);
 	oSettings.setValue("faceFitPath", m_sFaceFitPath);
+	oSettings.setValue("dlibFaceDetModelFilename", m_sDlibFaceDetModelFilename);
+	oSettings.setValue("dlibLandmarkLocModelFilename", m_sDlibLandmarkLocModelFilename);
 
     if(m_pAbout)
         delete m_pAbout;
@@ -197,7 +197,13 @@ void ft::MainWindow::showEvent(QShowEvent *pEvent)
 	vValue = oSettings.value("faceFitPath");
 	if (vValue.isValid())
 		m_sFaceFitPath = vValue.toString();
-	
+	vValue = oSettings.value("dlibFaceDetModelFilename");
+	if (vValue.isValid())
+		m_sDlibFaceDetModelFilename = vValue.toString();
+	vValue = oSettings.value("dlibLandmarkLocModelFilename");
+	if (vValue.isValid())
+		m_sDlibLandmarkLocModelFilename = vValue.toString();
+
 	// Update UI elements
 	updateUI();
 	ui->actionShowImagesList->setChecked(ui->dockImages->isVisible());
@@ -521,22 +527,19 @@ void ft::MainWindow::on_actionExportPointsFile_triggered()
 void ft::MainWindow::on_actionDlibFitLandmarks_triggered()
 {
 	// Check for face detection model
-	if (!m_dlib.has_facedet_model())
-	{
-		QString sFileName = QFileDialog::getOpenFileName(this, tr("Select DLIB face detector model..."), windowFilePath(), tr("Serialized DLIB model (*.dat);; All files (*.*)"));
-		if (sFileName.length())
-		{
-			if (!m_dlib.set_facedet_model_filename(sFileName))
-				QMessageBox::critical(this, tr("Error"), tr("Error loading model file %1!").arg(sFileName));
-		}
-	}
-	if (!m_dlib.has_facedet_model())
+	if (!m_oDlib.has_facedet_model() && !m_sDlibFaceDetModelFilename.isEmpty())
+		dlibLoadFaceDetModel(m_sDlibFaceDetModelFilename);
+	if (!m_oDlib.has_facedet_model())
+		emit on_actionDlibSelectFaceDetModel_triggered();
+	if (!m_oDlib.has_facedet_model())
 		return;
 
 	// Check for landmark localization model
-	if (!m_dlib.has_landmark_model())
+	if (!m_oDlib.has_landmark_model() && !m_sDlibLandmarkLocModelFilename.isEmpty())
+		dlibLoadLandmarkLocModel(m_sDlibLandmarkLocModelFilename);
+	if (!m_oDlib.has_landmark_model())
 		emit on_actionDlibSelectLandmarkModel_triggered();
-	if (!m_dlib.has_landmark_model())
+	if (!m_oDlib.has_landmark_model())
 		return;
 
 	// Get the selected face annotation dataset
@@ -550,8 +553,9 @@ void ft::MainWindow::on_actionDlibFitLandmarks_triggered()
 	QString sImageFile = pChild->dataModel()->data(oIdx, Qt::DisplayRole).toString();
 
 	// Run the algorithm
+	showStatusMessage(tr("Running dlib face detection and landmark localization..."));
 	std::vector<QPointF> vPoints;
-	if (!m_dlib.get_landmarks(sImageFile, vPoints))
+	if (!m_oDlib.get_landmarks(sImageFile, vPoints))
 		QMessageBox::critical(this, tr("Error"), tr("Cannot detect face!"));
 
 	// Reposition the features according to the face-fit results
@@ -559,13 +563,49 @@ void ft::MainWindow::on_actionDlibFitLandmarks_triggered()
 	showStatusMessage(tr("Face fit completed successfully."));
 }
 
+void ft::MainWindow::on_actionDlibSelectFaceDetModel_triggered()
+{
+	QString sFileName = QFileDialog::getOpenFileName(this, tr("Select DLIB face detector model..."), windowFilePath(), tr("Serialized DLIB model (*.dat);; All files (*.*)"));
+	if (sFileName.length())
+		dlibLoadFaceDetModel(sFileName);
+}
+
 void ft::MainWindow::on_actionDlibSelectLandmarkModel_triggered()
 {
 	QString sFileName = QFileDialog::getOpenFileName(this, tr("Select DLIB shape predictor model..."), windowFilePath(), tr("Serialized DLIB model (*.dat);; All files (*.*)"));
 	if (sFileName.length())
+		dlibLoadLandmarkLocModel(sFileName);
+}
+
+void ft::MainWindow::dlibLoadFaceDetModel(const QString & sFileName)
+{
+	if (!sFileName.length())
+		return;
+	showStatusMessage(tr("Loading dlib face detection model..."));
+	if (m_oDlib.set_facedet_model_filename(sFileName))
 	{
-		if (!m_dlib.set_landmark_model_filename(sFileName))
-			QMessageBox::critical(this, tr("Error"), tr("Error loading model file %1!").arg(sFileName));
+		showStatusMessage(tr("Loading dlib face detection model... successful!"));
+		m_sDlibFaceDetModelFilename = sFileName;
+	}
+	else
+	{
+		showStatusMessage("");
+		QMessageBox::critical(this, tr("Error"), tr("Error loading model file %1!").arg(sFileName));
+	}
+}
+
+void ft::MainWindow::dlibLoadLandmarkLocModel(const QString & sFileName)
+{
+	showStatusMessage(tr("Loading dlib landmark localization model..."));
+	if (m_oDlib.set_landmark_model_filename(sFileName))
+	{
+		showStatusMessage(tr("Loading dlib landmark localization model... successful."));
+		m_sDlibLandmarkLocModelFilename = sFileName;
+	}
+	else
+	{
+		showStatusMessage("");
+		QMessageBox::critical(this, tr("Error"), tr("Error loading model file %1!").arg(sFileName));
 	}
 }
 #endif

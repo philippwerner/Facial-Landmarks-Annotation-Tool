@@ -186,6 +186,11 @@ namespace ft
 		 * Slot for the menu dlib select landmark model trigger event.
 		 */
 		void on_actionDlibSelectLandmarkModel_triggered();
+
+		/**
+		 * Slot for the menu dlib select face detection model trigger event.
+		 */
+		void on_actionDlibSelectFaceDetModel_triggered();
 #endif
 
         /**
@@ -336,7 +341,17 @@ namespace ft
 		QString m_sFitTempFile;
 
 #ifdef DLIB_INTEGRATION
-		DlibFeatureLocalization m_dlib;
+		/** Dlib facial feature localization. */
+		DlibFeatureLocalization m_oDlib;
+
+		/** Dlib face detection model name. */
+		QString m_sDlibFaceDetModelFilename;
+
+		/** Dlib face detection model name. */
+		QString m_sDlibLandmarkLocModelFilename;
+
+		void dlibLoadFaceDetModel(const QString & sFileName);
+		void dlibLoadLandmarkLocModel(const QString & sFileName);
 #endif
     };
 };
