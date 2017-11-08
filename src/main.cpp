@@ -31,5 +31,12 @@ int main(int argc, char *argv[])
 	QObject::connect(FtApplication::instance(), SIGNAL(statusMessageShown(const QString &, const int)), &oMainWindow, SLOT(showStatusMessage(const QString &, const int)));
 
 	oMainWindow.show();
+
+	// assume that all arguments are files to open
+	for (int i = 1; i < argc; ++i)
+	{
+		oMainWindow.openFile(argv[i]);
+	}
+
 	return oApp.exec();
 }

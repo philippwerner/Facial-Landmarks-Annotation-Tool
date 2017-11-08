@@ -56,6 +56,13 @@ namespace ft
          */
         virtual ~MainWindow();
 
+		/**
+		 * Open a file.
+		 * @param sFile Filename.
+		 * @return Boolean indicating if file was opened successfully.
+		 */
+		bool openFile(const QString &sFile);
+
 	protected:
 
 		/**

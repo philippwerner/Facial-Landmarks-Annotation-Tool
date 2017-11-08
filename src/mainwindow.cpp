@@ -222,33 +222,7 @@ void ft::MainWindow::on_actionNew_triggered()
 void ft::MainWindow::on_actionOpen_triggered()
 {
     QString sFile = QFileDialog::getOpenFileName(this, tr("Open face annotation dataset..."), m_sLastPathUsed, tr("Face Annotation Dataset files (*.fad);; All files (*.*)"));
-    if(sFile.length())
-	{
-		m_sLastPathUsed = QFileInfo(sFile).absolutePath();
-		sFile = QDir::toNativeSeparators(sFile);
-		int iPage = getFilePageIndex(sFile);
-		if(iPage != -1)
-		{
-			ui->tabWidget->setCurrentIndex(iPage);
-			showStatusMessage(QString(tr("The face annotation dataset [%1] is already opened in the editor.")).arg(Utils::shortenPath(sFile)));
-		}
-		else
-		{
-			ChildWindow *pChild = createChildWindow(sFile, false);
-
-			QString sMsg;
-			if(!pChild->loadFromFile(sFile, sMsg))
-			{
-				destroyChildWindow(pChild);
-				QMessageBox::warning(this, tr("Fail to load the face annotation dataset"), tr("It was not possible to open the face annotation dataset:\n%1").arg(sMsg), QMessageBox::Ok);
-				return;
-			}
-
-			if(pChild->dataModel()->rowCount() > 0)
-				pChild->selectionModel()->setCurrentIndex(pChild->dataModel()->index(0, 0), QItemSelectionModel::Select);
-			updateUI();
-		}
-	}
+	openFile(sFile);
 }
 
 // +-----------------------------------------------------------
@@ -261,6 +235,40 @@ void ft::MainWindow::on_actionSave_triggered()
 void ft::MainWindow::on_actionSaveAs_triggered()
 {
 	saveCurrentFile(true);
+}
+
+// +-----------------------------------------------------------
+bool ft::MainWindow::openFile(const QString & sFile_)
+{
+	if (!sFile_.length())
+		return false;
+	
+	m_sLastPathUsed = QFileInfo(sFile_).absolutePath();
+	QString sFile = QDir::toNativeSeparators(sFile_);
+	int iPage = getFilePageIndex(sFile);
+	if (iPage != -1)
+	{
+		ui->tabWidget->setCurrentIndex(iPage);
+		showStatusMessage(QString(tr("The face annotation dataset [%1] is already opened in the editor.")).arg(Utils::shortenPath(sFile)));
+	}
+	else
+	{
+		ChildWindow *pChild = createChildWindow(sFile, false);
+
+		QString sMsg;
+		if (!pChild->loadFromFile(sFile, sMsg))
+		{
+			destroyChildWindow(pChild);
+			QMessageBox::warning(this, tr("Fail to load the face annotation dataset"), tr("It was not possible to open the face annotation dataset:\n%1").arg(sMsg), QMessageBox::Ok);
+			return false;
+		}
+
+		if (pChild->dataModel()->rowCount() > 0)
+			pChild->selectionModel()->setCurrentIndex(pChild->dataModel()->index(0, 0), QItemSelectionModel::Select);
+		updateUI();
+	}
+
+	return true;
 }
 
 // +-----------------------------------------------------------
