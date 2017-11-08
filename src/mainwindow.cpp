@@ -520,6 +520,19 @@ void ft::MainWindow::on_actionExportPointsFile_triggered()
 #ifdef DLIB_INTEGRATION
 void ft::MainWindow::on_actionDlibFitLandmarks_triggered()
 {
+	// Check for face detection model
+	if (!m_dlib.has_facedet_model())
+	{
+		QString sFileName = QFileDialog::getOpenFileName(this, tr("Select DLIB face detector model..."), windowFilePath(), tr("Serialized DLIB model (*.dat);; All files (*.*)"));
+		if (sFileName.length())
+		{
+			if (!m_dlib.set_facedet_model_filename(sFileName))
+				QMessageBox::critical(this, tr("Error"), tr("Error loading model file %1!").arg(sFileName));
+		}
+	}
+	if (!m_dlib.has_facedet_model())
+		return;
+
 	// Check for landmark localization model
 	if (!m_dlib.has_landmark_model())
 		emit on_actionDlibSelectLandmarkModel_triggered();

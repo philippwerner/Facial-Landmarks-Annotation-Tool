@@ -25,7 +25,35 @@
 
 DlibFeatureLocalization::DlibFeatureLocalization()
 {
+#ifndef DLIB_DNN_FACE_DETECTOR
 	face_detector = dlib::get_frontal_face_detector();
+#endif
+}
+
+bool DlibFeatureLocalization::set_facedet_model_filename(const QString & sModelFn)
+{
+#ifdef DLIB_DNN_FACE_DETECTOR
+	try
+	{
+		dlib::deserialize(sModelFn.toStdString()) >> face_detector;
+	}
+	catch (...)
+	{
+		return false;
+	}
+	face_detector_loaded = true;
+#endif
+
+	return true;
+}
+
+bool DlibFeatureLocalization::has_facedet_model() const
+{
+#ifdef DLIB_DNN_FACE_DETECTOR
+	return face_detector_loaded;
+#else
+	return true;
+#endif
 }
 
 bool DlibFeatureLocalization::set_landmark_model_filename(const QString & sModelFn)
@@ -51,18 +79,27 @@ bool DlibFeatureLocalization::get_landmarks(const QString & sImageFn, std::vecto
 {
 	// TODO: convert data (image already loaded by QT)
 
-	if (lm_localizer.num_parts() == 0)
+	if (!has_landmark_model() || !has_facedet_model())
 		return false;
 
 	// load image
-	dlib::array2d<dlib::rgb_pixel> img;
+	dlib::matrix<dlib::rgb_pixel> img;
 	dlib::load_image(img, sImageFn.toStdString());
 
 	// detect faces
+#ifdef DLIB_DNN_FACE_DETECTOR	
+	std::vector<dlib::matrix<dlib::rgb_pixel>> images(1);
+	std::vector<std::vector<dlib::mmod_rect>> dets_list;
+	std::vector<dlib::mmod_rect> dets;
+	images[0] = img;
+	dets_list = face_detector(images);
+	dets = dets_list[0];
+#else
 	std::vector<dlib::rectangle> dets = face_detector(img);
+#endif
 	if (dets.empty())
 		return false;
-	
+
 	// select biggest face
 	dlib::rectangle face_det;
 	size_t size = 0;
