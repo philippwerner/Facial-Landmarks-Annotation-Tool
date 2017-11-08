@@ -185,6 +185,11 @@ namespace ft
 		void connectFeatures();
 
 		/**
+		 * Connects features.
+		 */
+		void connectFeatures(const std::vector<std::pair<int, int>> & feature_idx_pairs);
+
+		/**
 		 * Disconnects the selected features.
 		 */
 		void disconnectFeatures();

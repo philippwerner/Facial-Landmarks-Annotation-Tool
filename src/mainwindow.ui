@@ -75,7 +75,7 @@
      <x>0</x>
      <y>0</y>
      <width>912</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -206,6 +206,8 @@
      <addaction name="separator"/>
      <addaction name="actionDlibSelectLandmarkModel"/>
      <addaction name="actionDlibSelectFaceDetModel"/>
+     <addaction name="separator"/>
+     <addaction name="actionDlibConnectFeatures"/>
     </widget>
     <addaction name="menu_CSIRO_Face_Analysis_SDK"/>
     <addaction name="menuDlib"/>
@@ -1023,6 +1025,17 @@
   <action name="actionDlibSelectFaceDetModel">
    <property name="text">
     <string>Select &amp;face detection model...</string>
+   </property>
+  </action>
+  <action name="actionDlibConnectFeatures">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Automatically &amp;link landmarks</string>
    </property>
   </action>
  </widget>

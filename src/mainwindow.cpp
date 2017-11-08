@@ -560,6 +560,32 @@ void ft::MainWindow::on_actionDlibFitLandmarks_triggered()
 
 	// Reposition the features according to the face-fit results
 	pChild->positionFeatures(vPoints);
+
+	// Connect landmarks if wanted
+	if (ui->actionDlibConnectFeatures->isChecked())
+	{
+		typedef std::pair<int, int> P;
+		std::vector<P> idx;
+		if (vPoints.size() == 68)
+		{
+			// chin-line
+			for (int i = 0; i < 16; ++i) idx.push_back(P(i, i + 1));
+			// eye-brows
+			for (int i = 17; i < 21; ++i) idx.push_back(P(i, i + 1));
+			for (int i = 22; i < 26; ++i) idx.push_back(P(i, i + 1));
+			// nose
+			for (int i = 27; i < 30; ++i) idx.push_back(P(i, i + 1));
+			for (int i = 31; i < 35; ++i) idx.push_back(P(i, i + 1));
+			// eyes
+			for (int i = 36; i < 41; ++i) idx.push_back(P(i, i + 1)); idx.push_back(P(36, 41));
+			for (int i = 42; i < 47; ++i) idx.push_back(P(i, i + 1)); idx.push_back(P(42, 47));
+			// mouth
+			for (int i = 48; i < 59; ++i) idx.push_back(P(i, i + 1)); idx.push_back(P(48, 59));
+			for (int i = 60; i < 67; ++i) idx.push_back(P(i, i + 1)); idx.push_back(P(60, 67));
+		}
+		pChild->connectFeatures(idx);
+	}
+
 	showStatusMessage(tr("Face fit completed successfully."));
 }
 

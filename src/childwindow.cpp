@@ -351,6 +351,21 @@ void ft::ChildWindow::connectFeatures()
 }
 
 // +-----------------------------------------------------------
+void ft::ChildWindow::connectFeatures(const std::vector<std::pair<int, int>>& feature_idx_pairs)
+{
+	if (feature_idx_pairs.empty())
+		return;
+
+	QList<FaceFeatureNode*> lsFeats = m_pFaceWidget->getSelectedFeatures();
+	for each (const std::pair<int, int> &p in feature_idx_pairs)
+	{
+		m_pFaceDatasetModel->connectFeatures(p.first, p.second);
+		m_pFaceWidget->connectFaceFeatures(p.first, p.second);
+	}
+	onDataChanged();
+}
+
+// +-----------------------------------------------------------
 void ft::ChildWindow::disconnectFeatures()
 {
 	bool bUpdated = false;
