@@ -53,6 +53,12 @@ namespace ft
 		virtual ~FaceImage();
 
 		/**
+		 * Copy features from oImg to this.
+		 * @param oImg Source image for copying features.
+		 */
+		void copyFeaturesFrom(const FaceImage * oImg);
+
+		/**
 		 * Gets the file name of the face image.
 		 * @return QString with the complete file name of the face image.
 		 */
@@ -161,9 +167,6 @@ namespace ft
 
 		/** Vector of the face features in this face image. */
 		std::vector<FaceFeature*> m_vFeatures;
-
-		/** Vector of the connections between face features in this face image. */
-		std::vector<FaceFeatureEdge*> m_vConnections;
     };
 }
 

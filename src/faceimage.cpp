@@ -40,14 +40,21 @@ ft::FaceImage::~FaceImage()
 }
 
 // +-----------------------------------------------------------
+void ft::FaceImage::copyFeaturesFrom(const FaceImage * oImg)
+{
+	m_vFeatures.clear();
+	for each (FaceFeature * src_ff in oImg->m_vFeatures)
+	{
+		m_vFeatures.push_back(new FaceFeature(*src_ff));
+	}
+}
+
+// +-----------------------------------------------------------
 void ft::FaceImage::clear()
 {
 	foreach(FaceFeature *pFeature, m_vFeatures)
 		delete pFeature;
-	foreach(FaceFeatureEdge *pEdge, m_vConnections)
-		delete pEdge;
 	m_vFeatures.clear();
-	m_vConnections.clear();
 }
 
 // +-----------------------------------------------------------

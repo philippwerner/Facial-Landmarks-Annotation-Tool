@@ -189,6 +189,7 @@ bool ft::FaceDatasetModel::saveToFile(const QString &sFileName, QString &sMsgErr
 // +-----------------------------------------------------------
 bool ft::FaceDatasetModel::addImages(const QStringList &lImageFiles)
 {
+	// add images to list and build thumbnails
 	int iFirst = m_pFaceDataset->size();
 	int iLast = iFirst + lImageFiles.size() - 1;
 	beginInsertRows(QModelIndex(), iFirst, iLast);
@@ -199,6 +200,16 @@ bool ft::FaceDatasetModel::addImages(const QStringList &lImageFiles)
 	}
 	endInsertRows();
 	emit dataChanged(index(iFirst), index(iLast));
+	// ensure that all images have the same number of features (if we not just added the first image)
+	if (numFeatures() != 0 && iFirst > 0)
+	{
+		FaceImage * first_img = m_pFaceDataset->getImage(0);
+		for (int i = iFirst; i <= iLast; i++)
+		{
+			FaceImage * new_img = m_pFaceDataset->getImage(i);
+			new_img->copyFeaturesFrom(first_img);
+		}
+	}
 	return true;
 }
 
