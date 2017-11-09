@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -66,7 +67,7 @@ void ft::FaceFeatureEdge::adjust()
 
     prepareGeometryChange();
 
-    QPointF edgeOffset((line.dx() * FaceFeatureNode::RADIUS) / length, (line.dy() * FaceFeatureNode::RADIUS) / length);
+    QPointF edgeOffset((line.dx() * FaceFeatureNode::RADIUS * 1.5) / length, (line.dy() * FaceFeatureNode::RADIUS * 1.5) / length);
 	m_oSourcePoint = line.p1() + edgeOffset;
     m_oTargetPoint = line.p2() - edgeOffset;
 }
@@ -90,6 +91,6 @@ void ft::FaceFeatureEdge::paint(QPainter *pPainter, const QStyleOptionGraphicsIt
         return;
 
     QLineF oLine(m_oSourcePoint, m_oTargetPoint);
-    pPainter->setPen(QPen(Qt::yellow, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    pPainter->setPen(QPen(Qt::yellow, FaceFeatureNode::LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     pPainter->drawLine(oLine);
 }

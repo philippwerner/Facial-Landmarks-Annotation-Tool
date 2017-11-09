@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -106,6 +107,21 @@ namespace ft
 		 * Performs one step of zoom out.
 		 */
 		void zoomOut();
+
+		/**
+		 * Shrinks annotation (dots, lines, and text).
+		 */
+		void shrinkAnnotation();
+
+		/**
+		 * Enlarges annotation (dots, lines, and text).
+		 */
+		void enlargeAnnotation();
+
+		/**
+		 * Toggle whether annotation dots are filled.
+		 */
+		void toggleAnnotationFill();
 
 		/**
 		 * Indicates if the face feature nodes are on display.

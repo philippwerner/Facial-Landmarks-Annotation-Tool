@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -88,6 +89,17 @@ namespace ft
 		 * Performs one step of zoom out.
 		 */
 		void zoomOut();
+
+		/**
+		 * Change the annotation size (dots, lines, and text) by one step.
+		 * @param shrink True to shrink by one step, false to enlarge by one step.
+		 */
+		void changeAnnotationSize(bool shrink);
+
+		/**
+		 * Toggle whether annotation circles should be filled.
+		 */
+		void toggleAnnotationFill();
 
 		/**
 		 * Queries the list of existing face feature nodes. Optionally, guarantee that the

@@ -998,12 +998,29 @@ void ft::MainWindow::keyPressEvent(QKeyEvent *pEvent)
     switch(pEvent->key())
 	{
 		case Qt::Key_Plus:
+		case Qt::Key_8:
 			pChild->zoomIn();
 			pEvent->accept();
 			break;
 
 		case Qt::Key_Minus:
+		case Qt::Key_2:
 			pChild->zoomOut();
+			pEvent->accept();
+			break;
+
+		case Qt::Key_4:
+			pChild->shrinkAnnotation();
+			pEvent->accept();
+			break;
+
+		case Qt::Key_6:
+			pChild->enlargeAnnotation();
+			pEvent->accept();
+			break;
+
+		case Qt::Key_5:
+			pChild->toggleAnnotationFill();
 			pEvent->accept();
 			break;
 

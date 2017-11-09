@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -27,7 +28,14 @@
 #include <QPainter>
 
 // Radius of the drawn node, in pixels
-const int ft::FaceFeatureNode::RADIUS = 4;
+float ft::FaceFeatureNode::RADIUS = 4;
+
+// Line width
+float ft::FaceFeatureNode::LINE_WIDTH = 1.0f;
+
+// Whether to fill the drawn node circle
+bool ft::FaceFeatureNode::FILL_CIRCLE = false;
+
 
 // +-----------------------------------------------------------
 ft::FaceFeatureNode::FaceFeatureNode(int iID, FaceWidget *pFaceWidget)
@@ -37,7 +45,6 @@ ft::FaceFeatureNode::FaceFeatureNode(int iID, FaceWidget *pFaceWidget)
     setFlag(ItemIsMovable);
     setFlag(ItemSendsGeometryChanges);
 	setFlag(ItemIsSelectable);
-    setCacheMode(DeviceCoordinateCache);
 
 	setSelected(false);
 	setAcceptHoverEvents(true);
@@ -102,12 +109,12 @@ void ft::FaceFeatureNode::paint(QPainter *pPainter, const QStyleOptionGraphicsIt
 	oBrush.setStyle(Qt::SolidPattern);
 	if(isSelected())
 	{
-	    pPainter->setPen(QPen(Qt::red, 0));
+	    pPainter->setPen(QPen(Qt::red, LINE_WIDTH));
 		oBrush.setColor(QColor(Qt::red));
 	}
 	else
 	{
-	    pPainter->setPen(QPen(Qt::yellow, 0));
+	    pPainter->setPen(QPen(Qt::yellow, LINE_WIDTH));
 		oBrush.setColor(QColor(Qt::yellow));
 	}
 
@@ -117,6 +124,7 @@ void ft::FaceFeatureNode::paint(QPainter *pPainter, const QStyleOptionGraphicsIt
 		QString sID = QString::number(m_iID);
 		int iHeight = m_pFaceWidget->fontMetrics().height();
 		int iWidth = m_pFaceWidget->fontMetrics().width(sID);
+		pPainter->setFont(m_pFaceWidget->font());
 		oBounds = QRectF(-(iWidth + RADIUS), -(iHeight + RADIUS), iWidth, iHeight);
 		pPainter->drawText(oBounds, sID);
 
@@ -125,7 +133,8 @@ void ft::FaceFeatureNode::paint(QPainter *pPainter, const QStyleOptionGraphicsIt
 	else
 		oBounds = boundingRect();
 
-    pPainter->setBrush(oBrush);
+    if (FILL_CIRCLE)
+		pPainter->setBrush(oBrush);
 	pPainter->drawEllipse(oBounds);
 }
 

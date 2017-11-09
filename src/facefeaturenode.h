@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -86,8 +87,14 @@ namespace ft
 
 	public:
 
-		/** Constant with the radius of the node drawn, in pixels. */
-		const static int RADIUS;
+		/** Radius of the node drawn, in pixels. */
+		static float RADIUS;
+
+		/** Line width. */
+		static float LINE_WIDTH;
+
+		/** Whether to fill the circle. */
+		static bool FILL_CIRCLE;
 
 	protected:
 

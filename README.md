@@ -8,6 +8,13 @@ A visual editor for manually annotating facial landmarks in images of human face
 
 Create a new face annotation dataset (files with extension `.fad`) and add the face images. Then, add the facial features and connect then as desired using either the program menus or the context menu. The zoom level can be controlled either from the widget control on the image properties tool window or by holding CTRL and scrolling the mouse wheel. While zoomed, an image can also be side scrolled by holding SHIFT and scrolling the mouse wheel. All images in the same face annotation dataset share the same model, that is they have the same amount of face landmarks (even though they can be differently positioned for each image). Automatically fitting of 66 face landmarks can be performed via the "Fit Landmarks" option if the utility is available (see details bellow). If the automatic fitting succeeds, the 66 landmarks will be positioned as best as possible in the face image. Otherwise, a status bar message will indicate the error.
 
+Hidden keyboard commands:
+- '+' and '2': zoom in
+- '-' and '8': zoom out
+- '4': reduce size of annotation
+- '6': increase size of annotation
+- '5': toggle whether annotation circles are filled
+
 ## Dependences
 
 The application has been developed and tested with:

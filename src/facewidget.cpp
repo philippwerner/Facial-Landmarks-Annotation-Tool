@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -70,6 +71,11 @@ ft::FaceWidget::FaceWidget(QWidget *pParent) : QGraphicsView(pParent)
 	//createFaceFeatures();
 	m_bFeaturesMoved = false;
 	m_bSelectionChanged = false;
+
+	// reduce font size (better readable annotation)
+	QFont theFont = font();
+	theFont.setPointSize(5);
+	setFont(theFont);
 }
 
 // +-----------------------------------------------------------
@@ -211,6 +217,46 @@ void ft::FaceWidget::zoomIn()
 void ft::FaceWidget::zoomOut()
 {
 	scaleViewBy(ZOOM_OUT_STEP);
+}
+
+// +-----------------------------------------------------------
+void ft::FaceWidget::changeAnnotationSize(bool shrink)
+{
+	const float annotationShrinkFactor = 0.8f;
+
+	// update sizes
+	QFont font = this->font();
+	if (shrink)
+	{
+		if (font.pointSizeF() < 1)
+			return;
+		FaceFeatureNode::RADIUS *= annotationShrinkFactor;
+		FaceFeatureNode::LINE_WIDTH *= annotationShrinkFactor;
+		font.setPointSizeF(font.pointSizeF() * annotationShrinkFactor);
+	}
+	else
+	{
+		FaceFeatureNode::RADIUS /= annotationShrinkFactor;
+		FaceFeatureNode::LINE_WIDTH /= annotationShrinkFactor;
+		font.setPointSizeF(font.pointSizeF() / annotationShrinkFactor);
+	}
+	this->setFont(font);
+
+	// update edges
+	for each (FaceFeatureEdge * edge in m_lConnections)
+	{
+		edge->adjust();
+	}
+
+	// update display on screen
+	m_pScene->update();
+}
+
+// +-----------------------------------------------------------
+void ft::FaceWidget::toggleAnnotationFill()
+{
+	FaceFeatureNode::FILL_CIRCLE = !FaceFeatureNode::FILL_CIRCLE;
+	m_pScene->update();
 }
 
 // +-----------------------------------------------------------

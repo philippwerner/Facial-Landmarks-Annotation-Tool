@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Luiz Carlos Vieira (http://www.luiz.vieira.nom.br)
+ *               2017 Philipp Werner (http://philipp-werner.info)
  *
  * This file is part of FLAT.
  *
@@ -150,6 +151,26 @@ void ft::ChildWindow::zoomIn()
 void ft::ChildWindow::zoomOut()
 {
 	m_pFaceWidget->zoomOut();
+}
+
+// +-----------------------------------------------------------
+void ft::ChildWindow::shrinkAnnotation()
+{
+	bool shrink = true;
+	m_pFaceWidget->changeAnnotationSize(shrink);
+}
+
+// +-----------------------------------------------------------
+void ft::ChildWindow::enlargeAnnotation()
+{
+	bool shrink = false;
+	m_pFaceWidget->changeAnnotationSize(shrink);
+}
+
+// +-----------------------------------------------------------
+void ft::ChildWindow::toggleAnnotationFill()
+{
+	m_pFaceWidget->toggleAnnotationFill();
 }
 
 // +-----------------------------------------------------------
