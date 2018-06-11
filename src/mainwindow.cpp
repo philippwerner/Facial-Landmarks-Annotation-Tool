@@ -615,10 +615,10 @@ void ft::MainWindow::dlibLoadFaceDetModel(const QString & sFileName)
 {
 	if (!sFileName.length())
 		return;
-	showStatusMessage(tr("Loading dlib face detection model..."));
+	showStatusMessage(tr("Loading dlib face detection model '%1'...").arg(sFileName));
 	if (m_oDlib.set_facedet_model_filename(sFileName))
 	{
-		showStatusMessage(tr("Loading dlib face detection model... successful!"));
+		showStatusMessage(tr("Loading dlib face detection model '%1'... successful!").arg(sFileName));
 		m_sDlibFaceDetModelFilename = sFileName;
 	}
 	else
@@ -630,10 +630,10 @@ void ft::MainWindow::dlibLoadFaceDetModel(const QString & sFileName)
 
 void ft::MainWindow::dlibLoadLandmarkLocModel(const QString & sFileName)
 {
-	showStatusMessage(tr("Loading dlib landmark localization model..."));
+	showStatusMessage(tr("Loading dlib landmark localization model '%1'...").arg(sFileName));
 	if (m_oDlib.set_landmark_model_filename(sFileName))
 	{
-		showStatusMessage(tr("Loading dlib landmark localization model... successful."));
+		showStatusMessage(tr("Loading dlib landmark localization model '%1'... successful.").arg(sFileName));
 		m_sDlibLandmarkLocModelFilename = sFileName;
 	}
 	else
