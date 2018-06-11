@@ -24,6 +24,8 @@ The application has been developed and tested with:
 
 The "Fit Landmarks" menu option (in "Tools/CSIRO Face Analysis SDK" menu) requires an external executable called `fit-fit(.exe)` - even though its absence does not prevent the FLAT tool from being compiled and used. Please check the [SDK web site](http://face.ci2cv.net/) and [the source code of my port to Windows/Linux](https://github.com/luigivieira/face-analysis-sdk). The option for an external dependence (instead of source code integration) is only to make the compilation of this project simpler and its usage broader.
 
+Optionally, this tool can be built with dlib integration for initializing landmark positions.
+
 ## Building
 
 1. Use CMake to configure and generate the environment. I suggest using the folder `build`, since it is the one ignored by gitignore.
@@ -33,6 +35,6 @@ The "Fit Landmarks" menu option (in "Tools/CSIRO Face Analysis SDK" menu) requir
 
 ## Credits
 
-Copyright (C) 2016 [Luiz Carlos Vieira](http://www.luiz.vieira.nom.br). Available under GPL (see details in the license file).
+Copyright (C) 2016 [Luiz Carlos Vieira](http://www.luiz.vieira.nom.br), 2017 [Philipp Werner](http://philipp-werner.info). Available under GPL (see details in the license file).
 
 The application icons and images are either from or based on the Oxygen Icons Set, downloaded as [PNGs from Felipe Azevedo (pasnox)](https://github.com/pasnox/oxygen-icons-png) and [licensed under LGPL from KDE](https://techbase.kde.org/Projects/Oxygen/Licensing), and the [Farm-Fresh Web Icons Set](http://www.fatcow.com/free-icons), licensed under [Creative Commons (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/).
